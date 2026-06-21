@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Oswald", Impact, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --bg: #0a0d0a;
+  --bg-soft: #11150f;
+  --panel: #141a12;
+  --panel-2: #1a2117;
+  --border: #2a3326;
+  --border-soft: #1f2a1c;
+  --text: #dadfd1;
+  --muted: #8b9683;
+  --muted-2: #5f6a57;
+  --accent: #d8772a;
+  --accent-2: #6f9e34;
+  --danger: #e24b4a;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Leaflet overrides */
+.leaflet-container {
+  background: #0a0d0a;
+  font-family: var(--font-sans);
+  outline: none;
+}
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background: var(--panel);
+  color: var(--text);
+  border-color: var(--border);
+}
+.leaflet-control-attribution {
+  background: rgba(10, 13, 10, 0.7) !important;
+  color: var(--muted-2) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--muted) !important;
+}
+.nav-pin {
+  border-radius: 9999px;
+  border: 2px solid #0a0d0a;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.nav-pin:hover {
+  transform: scale(1.25);
+}
+.nav-pin.enemy {
+  animation: navpulse 1.8s ease-out infinite;
+}
+@keyframes navpulse {
+  0% { box-shadow: 0 0 0 0 rgba(47, 143, 208, 0.55); }
+  70% { box-shadow: 0 0 0 12px rgba(47, 143, 208, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(47, 143, 208, 0); }
+}

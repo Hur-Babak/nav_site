@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <pattern id="forest" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">
+      <rect width="22" height="22" fill="none"/>
+      <circle cx="6" cy="6" r="2.1" fill="#2c3a26"/>
+      <circle cx="16" cy="15" r="2.1" fill="#2c3a26"/>
+    </pattern>
+    <pattern id="grid" width="160" height="160" patternUnits="userSpaceOnUse">
+      <path d="M160 0 H0 V160" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#10171c"/>
+
+  <path d="M0,0 L360,0 C420,140 300,250 360,400 C420,560 280,640 330,760 C370,860 300,930 360,1000 L0,1000 Z" fill="#132028"/>
+  <path d="M360,0 C420,140 300,250 360,400 C420,560 280,640 330,760 C370,860 300,930 360,1000"
+        fill="none" stroke="#27506a" stroke-width="3" stroke-opacity="0.7"/>
+
+  <rect x="360" y="0" width="1240" height="1000" fill="#1a241a"/>
+
+  <ellipse cx="780" cy="180" rx="230" ry="150" fill="url(#forest)" opacity="0.8"/>
+  <ellipse cx="1300" cy="780" rx="260" ry="170" fill="url(#forest)" opacity="0.8"/>
+  <ellipse cx="560" cy="820" rx="170" ry="120" fill="url(#forest)" opacity="0.8"/>
+  <ellipse cx="1180" cy="300" rx="150" ry="110" fill="url(#forest)" opacity="0.6"/>
+
+  <rect x="360" y="0" width="1240" height="1000" fill="url(#grid)"/>
+
+  <path d="M620,0 C660,180 540,320 600,460 C650,580 470,640 360,700"
+        fill="none" stroke="#24505f" stroke-width="9" stroke-opacity="0.85" stroke-linecap="round"/>
+
+  <path d="M330,790 C520,720 640,690 820,600 C1010,505 1180,430 1500,300"
+        fill="none" stroke="#4a4f40" stroke-width="7" stroke-linecap="round"/>
+  <path d="M300,150 C520,210 760,300 980,330 C1220,360 1380,470 1560,560"
+        fill="none" stroke="#3c4036" stroke-width="5" stroke-linecap="round"/>
+  <path d="M980,330 L1010,640 L900,880" fill="none" stroke="#3c4036" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M120,860 C360,800 560,700 740,560 C940,405 1120,300 1320,210"
+        fill="none" stroke="#2f7fa6" stroke-width="3.5" stroke-dasharray="14 12" stroke-linecap="round" opacity="0.9"/>
+  <path d="M120,860 l-16,-10 m16,10 l-10,16" fill="none" stroke="#2f7fa6" stroke-width="3" opacity="0.9"/>
+
+  <g font-family="Consolas, monospace" fill="#5e6b58" font-size="22" letter-spacing="2">
+    <text x="380" y="40">A</text><text x="540" y="40">B</text><text x="700" y="40">C</text><text x="860" y="40">D</text><text x="1020" y="40">E</text><text x="1180" y="40">F</text><text x="1340" y="40">G</text><text x="1500" y="40">H</text>
+    <text x="372" y="180">1</text><text x="372" y="340">2</text><text x="372" y="500">3</text><text x="372" y="660">4</text><text x="372" y="820">5</text>
+  </g>
+
+  <g font-family="Oswald, Impact, sans-serif" fill="#8a9683" font-size="26" letter-spacing="1">
+    <rect x="500" y="548" width="11" height="11" fill="#8a9683"/><text x="520" y="560">ЛУБЕНИЦЯ</text>
+    <rect x="958" y="298" width="11" height="11" fill="#8a9683"/><text x="978" y="310">ПЕРХАВАЦ</text>
+    <rect x="1226" y="486" width="11" height="11" fill="#8a9683"/><text x="1246" y="498">ДРАВОГРАД</text>
+    <rect x="296" y="486" width="11" height="11" fill="#8a9683"/><text x="316" y="498">ПОРТ</text>
+    <rect x="742" y="656" width="11" height="11" fill="#8a9683"/><text x="762" y="668">ВУЗОЛ-7</text>
+  </g>
+
+  <g font-family="Oswald, Impact, sans-serif" fill="#3a4636" font-size="58" letter-spacing="10" opacity="0.5">
+    <text x="600" y="940">ПРИБЕРЕЖНИЙ СЕКТОР</text>
+  </g>
+</svg>
