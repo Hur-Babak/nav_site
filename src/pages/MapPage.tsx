@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import ArmaMap from "../components/map/ArmaMap";
+import { useAuth } from "../components/AuthContext";
+import { LoginModal } from "../components/LoginModal";
 import { POPULAR_MAPS } from "../lib/arma";
 import {
   loadCompanies,
@@ -69,6 +71,8 @@ export default function MapPage() {
   const [addColor, setAddColor] = useState<string>(MARKER_COLORS[0]);
   const [selected, setSelected] = useState<MapMarker | null>(null);
   const [newName, setNewName] = useState("");
+  const { authed, logout } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
 
   const selIdRef = useRef(selId);
   selIdRef.current = selId;
@@ -161,33 +165,51 @@ export default function MapPage() {
             Карта операцій
           </h1>
         </div>
-        <div className="flex overflow-hidden border border-[var(--border)]">
-          <button
-            onClick={() => {
-              setEditMode(false);
-              setSelected(null);
-            }}
-            className="label-mono px-4 py-2"
-            style={{
-              background: !editMode ? "var(--accent)" : "transparent",
-              color: !editMode ? "#000" : "var(--muted)",
-            }}
-          >
-            Перегляд
-          </button>
-          <button
-            onClick={() => {
-              setEditMode(true);
-              setSelected(null);
-            }}
-            className="label-mono px-4 py-2"
-            style={{
-              background: editMode ? "var(--accent)" : "transparent",
-              color: editMode ? "#000" : "var(--muted)",
-            }}
-          >
-            Редагування
-          </button>
+        <div className="flex items-center gap-3">
+          <div className="flex overflow-hidden border border-[var(--border)]">
+            <button
+              onClick={() => {
+                setEditMode(false);
+                setSelected(null);
+              }}
+              className="label-mono px-4 py-2"
+              style={{
+                background: !editMode ? "var(--accent)" : "transparent",
+                color: !editMode ? "#000" : "var(--muted)",
+              }}
+            >
+              Перегляд
+            </button>
+            <button
+              onClick={() => {
+                if (authed) {
+                  setEditMode(true);
+                  setSelected(null);
+                } else {
+                  setShowLogin(true);
+                }
+              }}
+              className="label-mono px-4 py-2"
+              style={{
+                background: editMode ? "var(--accent)" : "transparent",
+                color: editMode ? "#000" : "var(--muted)",
+              }}
+            >
+              Редагування{!authed ? " 🔒" : ""}
+            </button>
+          </div>
+          {authed && (
+            <button
+              onClick={() => {
+                logout();
+                setEditMode(false);
+                setSelected(null);
+              }}
+              className="label-mono border border-[var(--border)] px-3 py-2 text-[var(--muted-2)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger)]"
+            >
+              Вийти
+            </button>
+          )}
         </div>
       </div>
 
@@ -454,6 +476,16 @@ export default function MapPage() {
             </div>
           </div>
         </div>
+      )}
+      {showLogin && (
+        <LoginModal
+          onClose={() => setShowLogin(false)}
+          onSuccess={() => {
+            setShowLogin(false);
+            setEditMode(true);
+            setSelected(null);
+          }}
+        />
       )}
     </div>
   );

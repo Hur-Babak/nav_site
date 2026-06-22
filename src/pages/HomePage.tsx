@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Reveal } from "../components/Reveal";
 import { Hero } from "../components/Hero";
 import { Units } from "../components/Units";
 import { Structure } from "../components/Structure";
@@ -19,7 +20,7 @@ export default function HomePage() {
 function MapTeaser() {
   return (
     <section className="border-y border-[var(--border)] bg-[var(--bg-soft)]">
-      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-5 py-16 md:flex-row md:items-center">
+      <Reveal className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 py-16 sm:px-5 md:flex-row md:items-center">
         <div>
           <p className="label-mono text-[var(--accent)]">// Театр дій</p>
           <h2 className="font-display mt-2 text-3xl font-bold uppercase tracking-tight md:text-4xl">
@@ -36,7 +37,7 @@ function MapTeaser() {
         >
           Відкрити карту
         </Link>
-      </div>
+      </Reveal>
     </section>
   );
 }

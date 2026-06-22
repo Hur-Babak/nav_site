@@ -39,27 +39,49 @@ export default function ArmaMap({
     loadArmaMap(company.map)
       .then((cfg) => {
         if (cancelled || !elRef.current) return;
-        map = L.map(elRef.current, {
+        const mp = L.map(elRef.current, {
           minZoom: cfg.minZoom,
           maxZoom: cfg.maxZoom,
           crs: cfg.CRS,
           zoomControl: true,
           attributionControl: true,
+          maxBoundsViscosity: 0.9,
         });
+        map = mp;
         L.tileLayer(ARMA_BASE + cfg.tilePattern, {
           attribution: cfg.attribution,
           tileSize: cfg.tileSize,
           minZoom: cfg.minZoom,
           maxZoom: cfg.maxZoom,
           noWrap: true,
-        }).addTo(map);
-        map.setView(cfg.center, cfg.defaultZoom);
-        map.on("click", (e: L.LeafletMouseEvent) => {
+        }).addTo(mp);
+        mp.setView(cfg.center, cfg.defaultZoom);
+
+        // Обмеження зони перетягування межами карти (worldSize) + невеликий відступ.
+        const ws = cfg.worldSize ?? 0;
+        if (ws > 0) {
+          const pad = ws * 0.08;
+          mp.setMaxBounds([
+            [-pad, -pad],
+            [ws + pad, ws + pad],
+          ]);
+        }
+
+        // Розмір міток залежно від зуму.
+        const applyPinScale = () => {
+          const z = mp.getZoom();
+          const s = Math.max(0.5, Math.min(1.8, 1 + (z - cfg.defaultZoom) * 0.22));
+          mp.getContainer().style.setProperty("--pin-scale", String(Math.round(s * 100) / 100));
+        };
+        mp.on("zoom", applyPinScale);
+        applyPinScale();
+
+        mp.on("click", (e: L.LeafletMouseEvent) => {
           const s = liveRef.current;
           if (s.editMode && s.addColor) s.onAddMarker(e.latlng.lng, e.latlng.lat);
         });
-        mapRef.current = map;
-        layerRef.current = L.layerGroup().addTo(map);
+        mapRef.current = mp;
+        layerRef.current = L.layerGroup().addTo(mp);
         setStatus("ready");
       })
       .catch((err: Error) => {
@@ -84,9 +106,9 @@ export default function ArmaMap({
     for (const m of company.markers) {
       const icon = L.divIcon({
         className: "",
-        html: `<span class="nav-pin" style="display:block;width:22px;height:22px;background:${m.color};box-shadow:0 0 10px ${m.color}aa"></span>`,
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
+        html: `<span class="nav-pin" style="--c:${m.color}"></span>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
       });
       const marker = L.marker([m.y, m.x], { icon, draggable: editMode });
       marker.on("click", () => onMarkerClick(m));
