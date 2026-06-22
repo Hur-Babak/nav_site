@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { CorpsEmblem } from "./Emblems";
 
 export function Hero() {
@@ -8,6 +9,19 @@ export function Hero() {
         style={{ backgroundImage: "url(/media/20251014191838_1.jpg)" }}
         aria-hidden
       />
+      {/* Відео-фон: спрацює, щойно покладеш файл public/media/hero.mp4.
+          Доти показується poster (скріншот). */}
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/media/20251014191838_1.jpg"
+        aria-hidden
+      >
+        <source src="/media/hero.mp4" type="video/mp4" />
+      </video>
       <div
         className="absolute inset-0"
         style={{
@@ -33,28 +47,28 @@ export function Hero() {
         </h1>
         <p className="max-w-xl text-lg leading-relaxed text-[var(--muted)]">
           Спеціальні операції без декларованої належності. Три підрозділи, одна
-          мета — зупинити НАПА на узбережжі. Нижче — карта конфлікту, хроніка
-          операцій і шлях до лав.
+          мета — зупинити НАПА на узбережжі. Обирай напрямок, дивись карту
+          операцій і приєднуйся до лав.
         </p>
         <div className="flex flex-wrap gap-3">
-          <a
-            href="#map"
+          <Link
+            to="/map"
             className="font-display text-sm font-semibold uppercase tracking-wider bg-[var(--accent)] px-6 py-3 text-black transition-opacity hover:opacity-90"
           >
             Відкрити карту
-          </a>
+          </Link>
           <a
             href="#join"
             className="font-display text-sm font-semibold uppercase tracking-wider border border-[var(--border)] px-6 py-3 text-[var(--text)] transition-colors hover:border-[var(--accent)]"
           >
-            Приєднатися до ION
+            Приєднатися
           </a>
         </div>
         <div className="mt-6 flex flex-wrap gap-8 border-t border-[var(--border-soft)] pt-6">
           {[
             ["19", "ролей у складі"],
             ["3", "бойові підрозділи"],
-            ["8", "операцій на карті"],
+            ["100+", "карт Arma в atlas"],
           ].map(([n, l]) => (
             <div key={l}>
               <div className="font-display text-3xl font-bold text-[var(--text)]">{n}</div>

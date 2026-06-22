@@ -49,6 +49,20 @@ body {
   color: var(--muted);
 }
 
+.input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .grain::before {
   content: "";
   position: absolute;

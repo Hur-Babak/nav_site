@@ -1,4 +1,5 @@
 import { SectionHead } from "./Units";
+import { DISCORD_URL } from "./SiteNav";
 
 const REQUIREMENTS = [
   "Вік від 16 років і робочий мікрофон",
@@ -14,8 +15,8 @@ export function Recruitment() {
         <div>
           <SectionHead
             kicker="Набір до лав"
-            title="Вступ до ION"
-            desc="ION — єдиний підрозділ Корпусу, відкритий для новачків. Кожен новобранець проходить підготовку поруч із досвідченими бійцями."
+            title="Вступ до Корпусу"
+            desc="Набір відкрито в усі підрозділи — обирай напрямок (TFEW, CCO P.U.M.A. чи ION). Кожен новобранець проходить підготовку поруч із досвідченими бійцями."
           />
           <ul className="mt-8 space-y-3">
             {REQUIREMENTS.map((r) => (
@@ -40,13 +41,15 @@ export function Recruitment() {
           </div>
           <div className="mt-8 space-y-3">
             <a
-              href="https://discord.gg/UVSEUzb6jJ"
+              href={DISCORD_URL}
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center justify-center bg-[var(--accent)] px-6 py-4 font-display text-base font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90"
             >
               Приєднатися в Discord
             </a>
             <p className="text-center font-mono text-xs text-[var(--muted-2)]">
-              discord.gg/UVSEUzb6jJ
+              discord.gg/6vwq5ApFdq
             </p>
           </div>
         </div>

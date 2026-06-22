@@ -1,36 +1,22 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SiteNav } from "./components/SiteNav";
-import { Hero } from "./components/Hero";
-import { Units, SectionHead } from "./components/Units";
-import { Structure } from "./components/Structure";
-import { Recruitment, Footer } from "./components/Recruitment";
-import { MapSection } from "./components/map/MapSection";
+import { Footer } from "./components/Recruitment";
+import HomePage from "./pages/HomePage";
+import MapPage from "./pages/MapPage";
+import GalleryPage from "./pages/GalleryPage";
 
 export default function App() {
   return (
-    <>
+    <BrowserRouter>
       <SiteNav />
-      <main>
-        <Hero />
-        <Units />
-        <section
-          id="map"
-          className="border-y border-[var(--border)] bg-[var(--bg-soft)]"
-        >
-          <div className="mx-auto max-w-6xl px-5 py-24">
-            <SectionHead
-              kicker="Театр дій"
-              title="Карта конфлікту"
-              desc="Кожна мітка — подія в прибережному секторі. Колір позначає тип, клік відкриває картку: що сталося, хто діяв, фото або відео."
-            />
-            <div className="mt-12">
-              <MapSection />
-            </div>
-          </div>
-        </section>
-        <Structure />
-        <Recruitment />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+        </Routes>
       </main>
       <Footer />
-    </>
+    </BrowserRouter>
   );
 }
