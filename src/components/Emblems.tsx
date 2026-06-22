@@ -1,25 +1,30 @@
+import { useState } from "react";
+
 export function CorpsEmblem({ size = 96 }: { size?: number }) {
+  const [err, setErr] = useState(false);
+
+  if (!err) {
+    return (
+      <img
+        src="/logos/nav.png"
+        width={size}
+        height={size}
+        alt="Емблема Корпусу НАВ"
+        onError={() => setErr(true)}
+        style={{ objectFit: "contain", display: "block" }}
+      />
+    );
+  }
+
   const rays = Array.from({ length: 16 });
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 200 200"
-      role="img"
-      aria-label="Емблема Корпусу НАВ"
-    >
+    <svg width={size} height={size} viewBox="0 0 200 200" role="img" aria-label="Емблема Корпусу НАВ">
       <g transform="translate(100 100)">
         {rays.map((_, i) => {
           const a = (i * 360) / rays.length;
           const color = i % 2 === 0 ? "#d8772a" : "#6f9e34";
           return (
-            <polygon
-              key={i}
-              points="-6,-70 6,-70 3,-94 -3,-94"
-              fill={color}
-              opacity="0.92"
-              transform={`rotate(${a})`}
-            />
+            <polygon key={i} points="-6,-70 6,-70 3,-94 -3,-94" fill={color} opacity="0.92" transform={`rotate(${a})`} />
           );
         })}
         <circle r="64" fill="#0c0f0b" stroke="#2a3326" strokeWidth="3" />
@@ -44,19 +49,30 @@ export function UnitCrest({
   short,
   accent,
   size = 84,
+  logo,
 }: {
   short: string;
   accent: string;
   size?: number;
+  logo?: string;
 }) {
+  const [err, setErr] = useState(false);
+
+  if (logo && !err) {
+    return (
+      <img
+        src={logo}
+        width={size}
+        height={size}
+        alt={`Емблема ${short}`}
+        onError={() => setErr(true)}
+        style={{ objectFit: "contain", display: "block" }}
+      />
+    );
+  }
+
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      role="img"
-      aria-label={`Емблема ${short}`}
-    >
+    <svg width={size} height={size} viewBox="0 0 120 120" role="img" aria-label={`Емблема ${short}`}>
       <path
         d="M60 6 L106 22 L106 64 C106 92 86 108 60 116 C34 108 14 92 14 64 L14 22 Z"
         fill="#10150e"

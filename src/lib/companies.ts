@@ -1,9 +1,19 @@
 import seed from "../data/companies.json";
-import type { EventType } from "./data";
+
+// Палітра кольорів для міток. Назву кожній мітці задає користувач сам.
+export const MARKER_COLORS = [
+  "#e24b4a",
+  "#ef9f27",
+  "#63a022",
+  "#2f8fd0",
+  "#9a64d0",
+  "#dadfd1",
+  "#8b8b85",
+];
 
 export interface MapMarker {
   id: string;
-  type: EventType;
+  color: string;
   title: string;
   date: string;
   description: string;

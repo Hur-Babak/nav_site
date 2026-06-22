@@ -13,7 +13,7 @@ export function Units() {
             style={{ borderTop: `3px solid ${u.accent}` }}
           >
             <div className="flex items-start justify-between">
-              <UnitCrest short={u.short} accent={u.accent} />
+              <UnitCrest short={u.short} accent={u.accent} logo={`/logos/${u.id}.png`} />
               {u.open ? (
                 <span className="label-mono border border-[var(--accent-2)] px-2 py-1 text-[var(--accent-2)]">
                   Набір відкрито

@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import ArmaMap from "../components/map/ArmaMap";
 import { POPULAR_MAPS } from "../lib/arma";
-import { EVENT_TYPES, type EventType } from "../lib/data";
 import {
   loadCompanies,
   saveCompanies,
   resetCompanies,
   exportCompanies,
   uid,
+  MARKER_COLORS,
   type Company,
   type MapMarker,
 } from "../lib/companies";
-
-const TYPES = Object.keys(EVENT_TYPES) as EventType[];
 
 function readJsonFile(file: File): Promise<Company[]> {
   return new Promise((resolve, reject) => {
@@ -29,11 +27,46 @@ function readJsonFile(file: File): Promise<Company[]> {
   });
 }
 
+function Swatches({
+  value,
+  onPick,
+}: {
+  value: string;
+  onPick: (c: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {MARKER_COLORS.map((c) => (
+        <button
+          key={c}
+          onClick={() => onPick(c)}
+          aria-label={c}
+          className="h-7 w-7 rounded-full"
+          style={{
+            background: c,
+            outline: value.toLowerCase() === c.toLowerCase() ? "2px solid var(--text)" : "none",
+            outlineOffset: "2px",
+          }}
+        />
+      ))}
+      <label className="ml-1 flex items-center gap-1 font-mono text-[11px] text-[var(--muted-2)]">
+        свій
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onPick(e.target.value)}
+          className="h-7 w-8 cursor-pointer bg-transparent"
+        />
+      </label>
+    </div>
+  );
+}
+
 export default function MapPage() {
   const [companies, setCompanies] = useState<Company[]>(() => loadCompanies());
   const [selId, setSelId] = useState<string>(() => loadCompanies()[0]?.id ?? "");
   const [editMode, setEditMode] = useState(false);
-  const [addType, setAddType] = useState<EventType | null>(null);
+  const [addColor, setAddColor] = useState<string>(MARKER_COLORS[0]);
   const [selected, setSelected] = useState<MapMarker | null>(null);
   const [newName, setNewName] = useState("");
 
@@ -50,11 +83,11 @@ export default function MapPage() {
     setCompanies((prev) => prev.map((c) => (c.id === id ? fn(c) : c)));
 
   const addMarker = (x: number, y: number) => {
-    if (!company || !addType) return;
+    if (!company) return;
     const m: MapMarker = {
       id: uid("m"),
-      type: addType,
-      title: "Нова подія",
+      color: addColor,
+      title: "Нова мітка",
       date: "",
       description: "",
       x: Math.round(x),
@@ -158,7 +191,6 @@ export default function MapPage() {
         </div>
       </div>
 
-      {/* Вкладки компаній */}
       <div className="mt-8 flex flex-wrap items-center gap-2">
         {companies.map((c) => (
           <button
@@ -175,9 +207,7 @@ export default function MapPage() {
           >
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.color }} />
             {c.name}
-            <span className="font-mono text-xs text-[var(--muted-2)]">
-              {c.markers.length}
-            </span>
+            <span className="font-mono text-xs text-[var(--muted-2)]">{c.markers.length}</span>
           </button>
         ))}
         {editMode && (
@@ -203,21 +233,20 @@ export default function MapPage() {
           Компаній ще немає. Перейди в «Редагування» і створи першу.
         </p>
       ) : (
-        <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_320px]">
+        <div className={editMode ? "mt-6 grid gap-5 lg:grid-cols-[1fr_320px]" : "mt-6"}>
           <div className="relative h-[480px] overflow-hidden border border-[var(--border)] md:h-[620px]">
             <ArmaMap
               company={company}
               editMode={editMode}
-              addType={addType}
+              addColor={editMode ? addColor : null}
               onAddMarker={addMarker}
               onMarkerClick={onMarkerClick}
               onMarkerMove={onMarkerMove}
             />
           </div>
 
-          {editMode ? (
+          {editMode && (
             <aside className="space-y-6 border border-[var(--border)] bg-[var(--panel)] p-5">
-              {/* Налаштування компанії */}
               <section className="space-y-3">
                 <p className="label-mono">Компанія</p>
                 <Field label="Назва">
@@ -228,7 +257,7 @@ export default function MapPage() {
                   />
                 </Field>
                 <div className="flex gap-3">
-                  <Field label="Колір">
+                  <Field label="Колір вкладки">
                     <input
                       type="color"
                       value={company.color}
@@ -252,56 +281,26 @@ export default function MapPage() {
                     </option>
                   ))}
                 </datalist>
-                <button
-                  onClick={() => deleteCompany(company.id)}
-                  className="label-mono text-[var(--danger)]"
-                >
+                <button onClick={() => deleteCompany(company.id)} className="label-mono text-[var(--danger)]">
                   Видалити компанію
                 </button>
               </section>
 
-              {/* Додавання мітки */}
               <section className="space-y-2 border-t border-[var(--border-soft)] pt-4">
-                <p className="label-mono">Нова мітка — обери тип і клікни по карті</p>
-                <div className="flex flex-wrap gap-2">
-                  {TYPES.map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setAddType(addType === t ? null : t)}
-                      className="flex items-center gap-2 border px-2 py-1 text-xs"
-                      style={{
-                        borderColor: addType === t ? EVENT_TYPES[t].color : "var(--border)",
-                        opacity: addType === t ? 1 : 0.65,
-                      }}
-                    >
-                      <span
-                        className="h-3 w-3 rounded-full"
-                        style={{ background: EVENT_TYPES[t].color }}
-                      />
-                      {EVENT_TYPES[t].label}
-                    </button>
-                  ))}
-                </div>
+                <p className="label-mono">Колір нової мітки — клікни по карті</p>
+                <Swatches value={addColor} onPick={setAddColor} />
               </section>
 
-              {/* Редактор вибраної мітки */}
               {selected && (
                 <section className="space-y-3 border-t border-[var(--border-soft)] pt-4">
                   <p className="label-mono text-[var(--accent)]">Мітка</p>
-                  <Field label="Тип">
-                    <select
-                      value={selected.type}
-                      onChange={(e) => updateMarker(selected.id, { type: e.target.value as EventType })}
-                      className="input"
-                    >
-                      {TYPES.map((t) => (
-                        <option key={t} value={t}>
-                          {EVENT_TYPES[t].label}
-                        </option>
-                      ))}
-                    </select>
+                  <Field label="Колір">
+                    <Swatches
+                      value={selected.color}
+                      onPick={(c) => updateMarker(selected.id, { color: c })}
+                    />
                   </Field>
-                  <Field label="Заголовок">
+                  <Field label="Назва">
                     <input
                       value={selected.title}
                       onChange={(e) => updateMarker(selected.id, { title: e.target.value })}
@@ -345,16 +344,12 @@ export default function MapPage() {
                   <p className="font-mono text-[11px] text-[var(--muted-2)]">
                     x {selected.x} · y {selected.y}
                   </p>
-                  <button
-                    onClick={() => deleteMarker(selected.id)}
-                    className="label-mono text-[var(--danger)]"
-                  >
+                  <button onClick={() => deleteMarker(selected.id)} className="label-mono text-[var(--danger)]">
                     Видалити мітку
                   </button>
                 </section>
               )}
 
-              {/* Дані */}
               <section className="space-y-2 border-t border-[var(--border-soft)] pt-4">
                 <p className="label-mono">Дані</p>
                 <div className="flex flex-wrap gap-2">
@@ -397,38 +392,15 @@ export default function MapPage() {
                   </button>
                 </div>
                 <p className="font-mono text-[11px] leading-relaxed text-[var(--muted-2)]">
-                  Зміни зберігаються локально в браузері. Щоб опублікувати —
-                  «Експорт JSON» і заміни ним <code>src/data/companies.json</code>,
-                  потім commit + push.
+                  Зміни зберігаються локально. Щоб опублікувати — «Експорт JSON» і
+                  заміни ним <code>src/data/companies.json</code>, потім commit + push.
                 </p>
               </section>
-            </aside>
-          ) : (
-            <aside className="border border-[var(--border)] bg-[var(--panel)] p-5">
-              <p className="label-mono">Легенда</p>
-              <div className="mt-4 space-y-2">
-                {TYPES.map((t) => (
-                  <div key={t} className="flex items-center gap-3">
-                    <span
-                      className="h-3 w-3 rounded-full"
-                      style={{ background: EVENT_TYPES[t].color }}
-                    />
-                    <span className="text-sm text-[var(--muted)]">
-                      {EVENT_TYPES[t].label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-5 border-t border-[var(--border-soft)] pt-4 font-mono text-[11px] leading-relaxed text-[var(--muted-2)]">
-                Карта: {company.map}. Клікни на мітку — відкриється картка події.
-                Редагування міток — у режимі «Редагування».
-              </p>
             </aside>
           )}
         </div>
       )}
 
-      {/* Модалка перегляду */}
       {selected && !editMode && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/70 p-4"
@@ -443,15 +415,12 @@ export default function MapPage() {
             )}
             <div className="p-5">
               <div className="flex items-center justify-between">
-                <span
-                  className="label-mono px-2 py-1"
-                  style={{
-                    color: EVENT_TYPES[selected.type].color,
-                    border: `1px solid ${EVENT_TYPES[selected.type].color}`,
-                  }}
-                >
-                  {EVENT_TYPES[selected.type].label}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full" style={{ background: selected.color }} />
+                  {selected.date && (
+                    <span className="font-mono text-xs text-[var(--muted-2)]">{selected.date}</span>
+                  )}
+                </div>
                 <button
                   onClick={() => setSelected(null)}
                   className="label-mono hover:text-[var(--text)]"
@@ -460,11 +429,6 @@ export default function MapPage() {
                   ✕
                 </button>
               </div>
-              {selected.date && (
-                <div className="mt-3 font-mono text-xs text-[var(--muted-2)]">
-                  {selected.date}
-                </div>
-              )}
               <h3 className="font-display mt-2 text-xl font-semibold uppercase tracking-wide">
                 {selected.title}
               </h3>
@@ -498,9 +462,7 @@ export default function MapPage() {
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block font-mono text-[11px] text-[var(--muted-2)]">
-        {label}
-      </span>
+      <span className="mb-1 block font-mono text-[11px] text-[var(--muted-2)]">{label}</span>
       {children}
     </label>
   );

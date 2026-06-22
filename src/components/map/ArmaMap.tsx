@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { loadArmaMap, ARMA_BASE } from "../../lib/arma";
-import { EVENT_TYPES, type EventType } from "../../lib/data";
 import type { Company, MapMarker } from "../../lib/companies";
 
 interface Props {
   company: Company;
   editMode: boolean;
-  addType: EventType | null;
+  addColor: string | null;
   onAddMarker: (x: number, y: number) => void;
   onMarkerClick: (m: MapMarker) => void;
   onMarkerMove: (id: string, x: number, y: number) => void;
@@ -17,7 +16,7 @@ interface Props {
 export default function ArmaMap({
   company,
   editMode,
-  addType,
+  addColor,
   onAddMarker,
   onMarkerClick,
   onMarkerMove,
@@ -28,11 +27,9 @@ export default function ArmaMap({
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [error, setError] = useState("");
 
-  // Свіжі значення для обробника кліку — щоб не переініціалізовувати карту.
-  const liveRef = useRef({ editMode, addType, onAddMarker });
-  liveRef.current = { editMode, addType, onAddMarker };
+  const liveRef = useRef({ editMode, addColor, onAddMarker });
+  liveRef.current = { editMode, addColor, onAddMarker };
 
-  // Ініціалізація карти при зміні slug.
   useEffect(() => {
     let cancelled = false;
     let map: L.Map | null = null;
@@ -59,7 +56,7 @@ export default function ArmaMap({
         map.setView(cfg.center, cfg.defaultZoom);
         map.on("click", (e: L.LeafletMouseEvent) => {
           const s = liveRef.current;
-          if (s.editMode && s.addType) s.onAddMarker(e.latlng.lng, e.latlng.lat);
+          if (s.editMode && s.addColor) s.onAddMarker(e.latlng.lng, e.latlng.lat);
         });
         mapRef.current = map;
         layerRef.current = L.layerGroup().addTo(map);
@@ -80,16 +77,14 @@ export default function ArmaMap({
     };
   }, [company.map]);
 
-  // Перемальовування міток.
   useEffect(() => {
     const layer = layerRef.current;
     if (!layer || status !== "ready") return;
     layer.clearLayers();
     for (const m of company.markers) {
-      const meta = EVENT_TYPES[m.type];
       const icon = L.divIcon({
         className: "",
-        html: `<span class="nav-pin ${m.type === "enemy" ? "enemy" : ""}" style="display:block;width:22px;height:22px;background:${meta.color};box-shadow:0 0 10px ${meta.color}aa"></span>`,
+        html: `<span class="nav-pin" style="display:block;width:22px;height:22px;background:${m.color};box-shadow:0 0 10px ${m.color}aa"></span>`,
         iconSize: [22, 22],
         iconAnchor: [11, 11],
       });
@@ -110,7 +105,7 @@ export default function ArmaMap({
       <div
         ref={elRef}
         className="h-full w-full"
-        style={{ cursor: editMode && addType ? "crosshair" : "" }}
+        style={{ cursor: editMode && addColor ? "crosshair" : "" }}
       />
       {status !== "ready" && (
         <div className="pointer-events-none absolute inset-0 z-[500] flex items-center justify-center bg-[var(--bg)]/70 text-center">
