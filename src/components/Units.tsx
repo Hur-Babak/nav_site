@@ -17,28 +17,20 @@ export function Units() {
             >
               <div className="flex items-start justify-between">
                 <UnitCrest short={u.short} accent={u.accent} logo={`/logos/${u.id}.png`} />
-                {u.open ? (
-                  <span className="label-mono border border-[var(--accent-2)] px-2 py-1 text-[var(--accent-2)]">
-                    Набір відкрито
-                  </span>
-                ) : (
-                  <span className="label-mono text-[var(--muted-2)]">Закрито</span>
-                )}
+                <span className="label-mono border border-[var(--accent-2)] px-2 py-1 text-[var(--accent-2)]">
+                  Набір відкрито
+                </span>
               </div>
               <h3 className="font-display mt-5 text-2xl font-semibold uppercase tracking-wide">
                 {u.short}
               </h3>
               <p className="label-mono mt-1">{u.name}</p>
-              <p className="mt-4 flex-1 text-sm leading-relaxed text-[var(--muted)]">
+              <p className="mt-4 flex-1 whitespace-pre-line text-sm leading-relaxed text-[var(--muted)]">
                 {u.description}
               </p>
-              <div className="mt-6 flex items-center justify-between border-t border-[var(--border-soft)] pt-4">
+              <div className="mt-6 border-t border-[var(--border-soft)] pt-4">
                 <span className="font-mono text-xs italic" style={{ color: u.accent }}>
                   «{u.motto}»
-                </span>
-                <span className="font-display text-xl font-bold">
-                  {u.members}
-                  <span className="label-mono ml-1">бійців</span>
                 </span>
               </div>
             </article>

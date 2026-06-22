@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import ArmaMap from "../components/map/ArmaMap";
+import { PageBanner } from "../components/PageBanner";
 import { useAuth } from "../components/AuthContext";
-import { LoginModal } from "../components/LoginModal";
 import { POPULAR_MAPS } from "../lib/arma";
 import {
   loadCompanies,
@@ -29,13 +29,7 @@ function readJsonFile(file: File): Promise<Company[]> {
   });
 }
 
-function Swatches({
-  value,
-  onPick,
-}: {
-  value: string;
-  onPick: (c: string) => void;
-}) {
+function Swatches({ value, onPick }: { value: string; onPick: (c: string) => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       {MARKER_COLORS.map((c) => (
@@ -65,14 +59,15 @@ function Swatches({
 }
 
 export default function MapPage() {
+  const { authed, logout } = useAuth();
   const [companies, setCompanies] = useState<Company[]>(() => loadCompanies());
   const [selId, setSelId] = useState<string>(() => loadCompanies()[0]?.id ?? "");
   const [editMode, setEditMode] = useState(false);
   const [addColor, setAddColor] = useState<string>(MARKER_COLORS[0]);
   const [selected, setSelected] = useState<MapMarker | null>(null);
   const [newName, setNewName] = useState("");
-  const { authed, logout } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
+
+  const editing = authed && editMode;
 
   const selIdRef = useRef(selId);
   selIdRef.current = selId;
@@ -157,48 +152,45 @@ export default function MapPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="label-mono text-[var(--accent)]">// Театр дій</p>
-          <h1 className="font-display mt-2 text-4xl font-bold uppercase tracking-tight md:text-5xl">
-            Карта операцій
-          </h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex overflow-hidden border border-[var(--border)]">
-            <button
-              onClick={() => {
-                setEditMode(false);
-                setSelected(null);
-              }}
-              className="label-mono px-4 py-2"
-              style={{
-                background: !editMode ? "var(--accent)" : "transparent",
-                color: !editMode ? "#000" : "var(--muted)",
-              }}
-            >
-              Перегляд
-            </button>
-            <button
-              onClick={() => {
-                if (authed) {
+    <>
+      <PageBanner
+        image="/media/crops/road.jpg"
+        kicker="Театр дій"
+        title="Карта операцій"
+        desc="Інтерактивна карта Arma 3 з мітками подій по компаніях. Обирай компанію та переглядай події — деталі відкриваються в картці мітки."
+      />
+
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-5">
+        {authed && (
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <div className="flex overflow-hidden border border-[var(--border)]">
+              <button
+                onClick={() => {
+                  setEditMode(false);
+                  setSelected(null);
+                }}
+                className="label-mono px-4 py-2"
+                style={{
+                  background: !editMode ? "var(--accent)" : "transparent",
+                  color: !editMode ? "#000" : "var(--muted)",
+                }}
+              >
+                Перегляд
+              </button>
+              <button
+                onClick={() => {
                   setEditMode(true);
                   setSelected(null);
-                } else {
-                  setShowLogin(true);
-                }
-              }}
-              className="label-mono px-4 py-2"
-              style={{
-                background: editMode ? "var(--accent)" : "transparent",
-                color: editMode ? "#000" : "var(--muted)",
-              }}
-            >
-              Редагування{!authed ? " 🔒" : ""}
-            </button>
-          </div>
-          {authed && (
+                }}
+                className="label-mono px-4 py-2"
+                style={{
+                  background: editMode ? "var(--accent)" : "transparent",
+                  color: editMode ? "#000" : "var(--muted)",
+                }}
+              >
+                Редагування
+              </button>
+            </div>
             <button
               onClick={() => {
                 logout();
@@ -209,285 +201,266 @@ export default function MapPage() {
             >
               Вийти
             </button>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2">
+          {companies.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => {
+                setSelId(c.id);
+                setSelected(null);
+              }}
+              className="flex items-center gap-2 border px-4 py-2 font-display text-sm font-medium uppercase tracking-wide transition-colors"
+              style={{
+                borderColor: c.id === selId ? c.color : "var(--border)",
+                background: c.id === selId ? "var(--panel)" : "transparent",
+              }}
+            >
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.color }} />
+              {c.name}
+              <span className="font-mono text-xs text-[var(--muted-2)]">{c.markers.length}</span>
+            </button>
+          ))}
+          {editing && (
+            <div className="flex items-center gap-2">
+              <input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="назва компанії"
+                className="w-40 border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm"
+              />
+              <button
+                onClick={addCompany}
+                className="label-mono border border-[var(--accent-2)] px-3 py-2 text-[var(--accent-2)]"
+              >
+                + компанія
+              </button>
+            </div>
           )}
         </div>
-      </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-2">
-        {companies.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => {
-              setSelId(c.id);
-              setSelected(null);
-            }}
-            className="flex items-center gap-2 border px-4 py-2 font-display text-sm font-medium uppercase tracking-wide"
-            style={{
-              borderColor: c.id === selId ? c.color : "var(--border)",
-              background: c.id === selId ? "var(--panel)" : "transparent",
-            }}
+        {!company ? (
+          <p className="mt-10 text-[var(--muted)]">Компаній ще немає.</p>
+        ) : (
+          <div className={editing ? "mt-6 grid gap-5 lg:grid-cols-[1fr_320px]" : "mt-6"}>
+            <div className="relative h-[480px] overflow-hidden border border-[var(--border)] md:h-[620px]">
+              <ArmaMap
+                company={company}
+                editMode={editing}
+                addColor={editing ? addColor : null}
+                onAddMarker={addMarker}
+                onMarkerClick={onMarkerClick}
+                onMarkerMove={onMarkerMove}
+              />
+            </div>
+
+            {editing && (
+              <aside className="space-y-6 border border-[var(--border)] bg-[var(--panel)] p-5">
+                <section className="space-y-3">
+                  <p className="label-mono">Компанія</p>
+                  <Field label="Назва">
+                    <input
+                      value={company.name}
+                      onChange={(e) => mutate(company.id, (c) => ({ ...c, name: e.target.value }))}
+                      className="input"
+                    />
+                  </Field>
+                  <div className="flex gap-3">
+                    <Field label="Колір вкладки">
+                      <input
+                        type="color"
+                        value={company.color}
+                        onChange={(e) => mutate(company.id, (c) => ({ ...c, color: e.target.value }))}
+                        className="h-9 w-full bg-[var(--bg)]"
+                      />
+                    </Field>
+                    <Field label="Карта (slug)">
+                      <input
+                        list="arma-maps"
+                        value={company.map}
+                        onChange={(e) => mutate(company.id, (c) => ({ ...c, map: e.target.value.trim() }))}
+                        className="input"
+                      />
+                    </Field>
+                  </div>
+                  <datalist id="arma-maps">
+                    {POPULAR_MAPS.map((m) => (
+                      <option key={m.slug} value={m.slug}>
+                        {m.name}
+                      </option>
+                    ))}
+                  </datalist>
+                  <button onClick={() => deleteCompany(company.id)} className="label-mono text-[var(--danger)]">
+                    Видалити компанію
+                  </button>
+                </section>
+
+                <section className="space-y-2 border-t border-[var(--border-soft)] pt-4">
+                  <p className="label-mono">Колір нової мітки — клікни по карті</p>
+                  <Swatches value={addColor} onPick={setAddColor} />
+                </section>
+
+                {selected && (
+                  <section className="space-y-3 border-t border-[var(--border-soft)] pt-4">
+                    <p className="label-mono text-[var(--accent)]">Мітка</p>
+                    <Field label="Колір">
+                      <Swatches value={selected.color} onPick={(c) => updateMarker(selected.id, { color: c })} />
+                    </Field>
+                    <Field label="Назва">
+                      <input
+                        value={selected.title}
+                        onChange={(e) => updateMarker(selected.id, { title: e.target.value })}
+                        className="input"
+                      />
+                    </Field>
+                    <Field label="Дата">
+                      <input
+                        value={selected.date}
+                        onChange={(e) => updateMarker(selected.id, { date: e.target.value })}
+                        placeholder="28.08.2026"
+                        className="input"
+                      />
+                    </Field>
+                    <Field label="Опис">
+                      <textarea
+                        value={selected.description}
+                        onChange={(e) => updateMarker(selected.id, { description: e.target.value })}
+                        rows={3}
+                        className="input"
+                      />
+                    </Field>
+                    <Field label="Фото (URL)">
+                      <input
+                        value={selected.image ?? ""}
+                        onChange={(e) => updateMarker(selected.id, { image: e.target.value || undefined })}
+                        className="input"
+                      />
+                    </Field>
+                    <Field label="Підрозділи (через кому)">
+                      <input
+                        value={(selected.units ?? []).join(", ")}
+                        onChange={(e) =>
+                          updateMarker(selected.id, {
+                            units: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                          })
+                        }
+                        className="input"
+                      />
+                    </Field>
+                    <p className="font-mono text-[11px] text-[var(--muted-2)]">
+                      x {selected.x} · y {selected.y}
+                    </p>
+                    <button onClick={() => deleteMarker(selected.id)} className="label-mono text-[var(--danger)]">
+                      Видалити мітку
+                    </button>
+                  </section>
+                )}
+
+                <section className="space-y-2 border-t border-[var(--border-soft)] pt-4">
+                  <p className="label-mono">Дані</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => exportCompanies(companies)}
+                      className="label-mono border border-[var(--border)] px-3 py-2 hover:border-[var(--accent)]"
+                    >
+                      Експорт JSON
+                    </button>
+                    <label className="label-mono cursor-pointer border border-[var(--border)] px-3 py-2 hover:border-[var(--accent)]">
+                      Імпорт JSON
+                      <input
+                        type="file"
+                        accept="application/json"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          try {
+                            const data = await readJsonFile(f);
+                            setCompanies(data);
+                            setSelId(data[0]?.id ?? "");
+                          } catch (err) {
+                            alert((err as Error).message);
+                          }
+                        }}
+                      />
+                    </label>
+                    <button
+                      onClick={() => {
+                        if (confirm("Скинути до початкових даних?")) {
+                          const d = resetCompanies();
+                          setCompanies(d);
+                          setSelId(d[0]?.id ?? "");
+                        }
+                      }}
+                      className="label-mono border border-[var(--border)] px-3 py-2 text-[var(--muted-2)]"
+                    >
+                      Скинути
+                    </button>
+                  </div>
+                  <p className="font-mono text-[11px] leading-relaxed text-[var(--muted-2)]">
+                    Зміни локальні. Щоб опублікувати — «Експорт JSON» і заміни ним{" "}
+                    <code>src/data/companies.json</code>, потім commit + push.
+                  </p>
+                </section>
+              </aside>
+            )}
+          </div>
+        )}
+
+        {selected && !editing && (
+          <div
+            className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/70 p-4"
+            onClick={() => setSelected(null)}
           >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.color }} />
-            {c.name}
-            <span className="font-mono text-xs text-[var(--muted-2)]">{c.markers.length}</span>
-          </button>
-        ))}
-        {editMode && (
-          <div className="flex items-center gap-2">
-            <input
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="назва компанії"
-              className="w-40 border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm"
-            />
-            <button
-              onClick={addCompany}
-              className="label-mono border border-[var(--accent-2)] px-3 py-2 text-[var(--accent-2)]"
+            <div
+              className="w-full max-w-md overflow-hidden border border-[var(--border)] bg-[var(--panel)]"
+              onClick={(e) => e.stopPropagation()}
             >
-              + компанія
-            </button>
+              {selected.image && <img src={selected.image} alt="" className="h-44 w-full object-cover" />}
+              <div className="p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="h-3 w-3 rounded-full" style={{ background: selected.color }} />
+                    {selected.date && (
+                      <span className="font-mono text-xs text-[var(--muted-2)]">{selected.date}</span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setSelected(null)}
+                    className="label-mono hover:text-[var(--text)]"
+                    aria-label="Закрити"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <h3 className="font-display mt-2 text-xl font-semibold uppercase tracking-wide">
+                  {selected.title}
+                </h3>
+                {selected.description && (
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{selected.description}</p>
+                )}
+                {(selected.units?.length || selected.source) && (
+                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border-soft)] pt-4">
+                    {selected.units?.map((u) => (
+                      <span key={u} className="bg-[var(--panel-2)] px-2 py-1 font-mono text-xs">
+                        {u}
+                      </span>
+                    ))}
+                    {selected.source && (
+                      <span className="ml-auto font-mono text-[11px] text-[var(--muted-2)]">
+                        {selected.source}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
-
-      {!company ? (
-        <p className="mt-10 text-[var(--muted)]">
-          Компаній ще немає. Перейди в «Редагування» і створи першу.
-        </p>
-      ) : (
-        <div className={editMode ? "mt-6 grid gap-5 lg:grid-cols-[1fr_320px]" : "mt-6"}>
-          <div className="relative h-[480px] overflow-hidden border border-[var(--border)] md:h-[620px]">
-            <ArmaMap
-              company={company}
-              editMode={editMode}
-              addColor={editMode ? addColor : null}
-              onAddMarker={addMarker}
-              onMarkerClick={onMarkerClick}
-              onMarkerMove={onMarkerMove}
-            />
-          </div>
-
-          {editMode && (
-            <aside className="space-y-6 border border-[var(--border)] bg-[var(--panel)] p-5">
-              <section className="space-y-3">
-                <p className="label-mono">Компанія</p>
-                <Field label="Назва">
-                  <input
-                    value={company.name}
-                    onChange={(e) => mutate(company.id, (c) => ({ ...c, name: e.target.value }))}
-                    className="input"
-                  />
-                </Field>
-                <div className="flex gap-3">
-                  <Field label="Колір вкладки">
-                    <input
-                      type="color"
-                      value={company.color}
-                      onChange={(e) => mutate(company.id, (c) => ({ ...c, color: e.target.value }))}
-                      className="h-9 w-full bg-[var(--bg)]"
-                    />
-                  </Field>
-                  <Field label="Карта (slug)">
-                    <input
-                      list="arma-maps"
-                      value={company.map}
-                      onChange={(e) => mutate(company.id, (c) => ({ ...c, map: e.target.value.trim() }))}
-                      className="input"
-                    />
-                  </Field>
-                </div>
-                <datalist id="arma-maps">
-                  {POPULAR_MAPS.map((m) => (
-                    <option key={m.slug} value={m.slug}>
-                      {m.name}
-                    </option>
-                  ))}
-                </datalist>
-                <button onClick={() => deleteCompany(company.id)} className="label-mono text-[var(--danger)]">
-                  Видалити компанію
-                </button>
-              </section>
-
-              <section className="space-y-2 border-t border-[var(--border-soft)] pt-4">
-                <p className="label-mono">Колір нової мітки — клікни по карті</p>
-                <Swatches value={addColor} onPick={setAddColor} />
-              </section>
-
-              {selected && (
-                <section className="space-y-3 border-t border-[var(--border-soft)] pt-4">
-                  <p className="label-mono text-[var(--accent)]">Мітка</p>
-                  <Field label="Колір">
-                    <Swatches
-                      value={selected.color}
-                      onPick={(c) => updateMarker(selected.id, { color: c })}
-                    />
-                  </Field>
-                  <Field label="Назва">
-                    <input
-                      value={selected.title}
-                      onChange={(e) => updateMarker(selected.id, { title: e.target.value })}
-                      className="input"
-                    />
-                  </Field>
-                  <Field label="Дата">
-                    <input
-                      value={selected.date}
-                      onChange={(e) => updateMarker(selected.id, { date: e.target.value })}
-                      placeholder="28.08.2026"
-                      className="input"
-                    />
-                  </Field>
-                  <Field label="Опис">
-                    <textarea
-                      value={selected.description}
-                      onChange={(e) => updateMarker(selected.id, { description: e.target.value })}
-                      rows={3}
-                      className="input"
-                    />
-                  </Field>
-                  <Field label="Фото (URL, напр. /media/crops/squad.jpg)">
-                    <input
-                      value={selected.image ?? ""}
-                      onChange={(e) => updateMarker(selected.id, { image: e.target.value || undefined })}
-                      className="input"
-                    />
-                  </Field>
-                  <Field label="Підрозділи (через кому)">
-                    <input
-                      value={(selected.units ?? []).join(", ")}
-                      onChange={(e) =>
-                        updateMarker(selected.id, {
-                          units: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                        })
-                      }
-                      className="input"
-                    />
-                  </Field>
-                  <p className="font-mono text-[11px] text-[var(--muted-2)]">
-                    x {selected.x} · y {selected.y}
-                  </p>
-                  <button onClick={() => deleteMarker(selected.id)} className="label-mono text-[var(--danger)]">
-                    Видалити мітку
-                  </button>
-                </section>
-              )}
-
-              <section className="space-y-2 border-t border-[var(--border-soft)] pt-4">
-                <p className="label-mono">Дані</p>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => exportCompanies(companies)}
-                    className="label-mono border border-[var(--border)] px-3 py-2 hover:border-[var(--accent)]"
-                  >
-                    Експорт JSON
-                  </button>
-                  <label className="label-mono cursor-pointer border border-[var(--border)] px-3 py-2 hover:border-[var(--accent)]">
-                    Імпорт JSON
-                    <input
-                      type="file"
-                      accept="application/json"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const f = e.target.files?.[0];
-                        if (!f) return;
-                        try {
-                          const data = await readJsonFile(f);
-                          setCompanies(data);
-                          setSelId(data[0]?.id ?? "");
-                        } catch (err) {
-                          alert((err as Error).message);
-                        }
-                      }}
-                    />
-                  </label>
-                  <button
-                    onClick={() => {
-                      if (confirm("Скинути до початкових даних?")) {
-                        const d = resetCompanies();
-                        setCompanies(d);
-                        setSelId(d[0]?.id ?? "");
-                      }
-                    }}
-                    className="label-mono border border-[var(--border)] px-3 py-2 text-[var(--muted-2)]"
-                  >
-                    Скинути
-                  </button>
-                </div>
-                <p className="font-mono text-[11px] leading-relaxed text-[var(--muted-2)]">
-                  Зміни зберігаються локально. Щоб опублікувати — «Експорт JSON» і
-                  заміни ним <code>src/data/companies.json</code>, потім commit + push.
-                </p>
-              </section>
-            </aside>
-          )}
-        </div>
-      )}
-
-      {selected && !editMode && (
-        <div
-          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/70 p-4"
-          onClick={() => setSelected(null)}
-        >
-          <div
-            className="w-full max-w-md overflow-hidden border border-[var(--border)] bg-[var(--panel)]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {selected.image && (
-              <img src={selected.image} alt="" className="h-44 w-full object-cover" />
-            )}
-            <div className="p-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full" style={{ background: selected.color }} />
-                  {selected.date && (
-                    <span className="font-mono text-xs text-[var(--muted-2)]">{selected.date}</span>
-                  )}
-                </div>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="label-mono hover:text-[var(--text)]"
-                  aria-label="Закрити"
-                >
-                  ✕
-                </button>
-              </div>
-              <h3 className="font-display mt-2 text-xl font-semibold uppercase tracking-wide">
-                {selected.title}
-              </h3>
-              {selected.description && (
-                <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-                  {selected.description}
-                </p>
-              )}
-              {(selected.units?.length || selected.source) && (
-                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border-soft)] pt-4">
-                  {selected.units?.map((u) => (
-                    <span key={u} className="bg-[var(--panel-2)] px-2 py-1 font-mono text-xs">
-                      {u}
-                    </span>
-                  ))}
-                  {selected.source && (
-                    <span className="ml-auto font-mono text-[11px] text-[var(--muted-2)]">
-                      {selected.source}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-      {showLogin && (
-        <LoginModal
-          onClose={() => setShowLogin(false)}
-          onSuccess={() => {
-            setShowLogin(false);
-            setEditMode(true);
-            setSelected(null);
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }
 
