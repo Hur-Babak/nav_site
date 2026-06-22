@@ -40,29 +40,29 @@ export function Hero() {
       >
         <div className="flex items-center gap-4">
           <CorpsEmblem size={56} />
-          <p className="label-mono">Об'єднаний Корпус НАВ</p>
+          <p className="label-mono">Join Corps «Nav»</p>
         </div>
-        <h1 className="font-display max-w-3xl text-[1.9rem] font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl md:text-7xl">
-          Корпус <span className="text-[var(--accent)]">«НАВ»</span>
+        <h1 className="font-display max-w-3xl text-[2.1rem] font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl md:text-7xl">
+          Один стрій —
           <br />
-          оперативне командування
+          <span className="text-[var(--accent)]">одна сила</span>
         </h1>
         <p className="max-w-xl text-base leading-relaxed text-[var(--muted)] sm:text-lg">
           Корпус в Arma 3 створений на підставах тактики, дисципліни та поваги.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link
-            to="/map"
-            className="bg-[var(--accent)] px-6 py-3 font-display text-sm font-semibold uppercase tracking-wider text-black transition-all hover:opacity-90 active:scale-95"
-          >
-            Відкрити карту
-          </Link>
           <a
             href="#join"
-            className="border border-[var(--border)] px-6 py-3 font-display text-sm font-semibold uppercase tracking-wider text-[var(--text)] transition-all hover:border-[var(--accent)] active:scale-95"
+            className="bg-[var(--accent)] px-6 py-3 font-display text-sm font-semibold uppercase tracking-wider text-black transition-all hover:opacity-90 active:scale-95"
           >
             Приєднатися
           </a>
+          <Link
+            to="/map"
+            className="border border-[var(--border)] px-6 py-3 font-display text-sm font-semibold uppercase tracking-wider text-[var(--text)] transition-all hover:border-[var(--accent)] active:scale-95"
+          >
+            Відкрити карту
+          </Link>
         </div>
       </motion.div>
     </section>

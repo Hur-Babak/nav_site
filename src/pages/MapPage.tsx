@@ -154,7 +154,7 @@ export default function MapPage() {
   return (
     <>
       <PageBanner
-        image="/media/crops/road.jpg"
+        image="/media/20251014191838_1.jpg"
         kicker="Театр дій"
         title="Карта операцій"
         desc="Інтерактивна карта Arma 3 з мітками подій по компаніях. Обирай компанію та переглядай події — деталі відкриваються в картці мітки."

@@ -27,7 +27,7 @@ export function Faq() {
 
   return (
     <section id="faq" className="border-y border-[var(--border)]">
-      <div className="mx-auto max-w-3xl px-4 py-20 sm:px-5 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-5 sm:py-24">
         <Reveal>
           <SectionHead kicker="FAQ" title="Часті питання" />
         </Reveal>

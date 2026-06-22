@@ -48,13 +48,14 @@ export default function ArmaMap({
           maxBoundsViscosity: 0.9,
         });
         map = mp;
-        L.tileLayer(ARMA_BASE + cfg.tilePattern, {
+        const baseLayer = L.tileLayer(ARMA_BASE + cfg.tilePattern, {
           attribution: cfg.attribution,
           tileSize: cfg.tileSize,
           minZoom: cfg.minZoom,
           maxZoom: cfg.maxZoom,
           noWrap: true,
-        }).addTo(mp);
+        });
+        baseLayer.addTo(mp);
         mp.setView(cfg.center, cfg.defaultZoom);
 
         // Обмеження зони перетягування межами карти (worldSize) + невеликий відступ.
@@ -66,6 +67,32 @@ export default function ArmaMap({
             [ws + pad, ws + pad],
           ]);
         }
+
+        // Перемикач шарів: база «Атлас» + оверлеї (назви міст, сітка).
+        const overlays: Record<string, L.Layer> = {};
+        const cities = (cfg.cities ?? []) as Array<{ name: string; x: number; y: number }>;
+        if (cities.length) {
+          const cityLayer = L.layerGroup();
+          for (const c of cities) {
+            L.marker([c.y, c.x], {
+              icon: L.divIcon({ className: "", html: `<span class="arma-city">${c.name}</span>`, iconSize: [0, 0] }),
+              interactive: false,
+            }).addTo(cityLayer);
+          }
+          overlays["Назви міст"] = cityLayer;
+        }
+        if (ws > 0) {
+          const gridLayer = L.layerGroup();
+          const step = ws > 20000 ? 5000 : 2000;
+          for (let g = 0; g <= ws; g += step) {
+            L.polyline([[g, 0], [g, ws]], { color: "#ffffff", weight: 1, opacity: 0.12, interactive: false }).addTo(gridLayer);
+            L.polyline([[0, g], [ws, g]], { color: "#ffffff", weight: 1, opacity: 0.12, interactive: false }).addTo(gridLayer);
+          }
+          overlays["Координатна сітка"] = gridLayer;
+        }
+        L.control
+          .layers({ "Атлас (топографічна)": baseLayer }, overlays, { position: "topright" })
+          .addTo(mp);
 
         // Розмір міток залежно від зуму.
         const applyPinScale = () => {

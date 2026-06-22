@@ -4,11 +4,8 @@ import { Reveal } from "./Reveal";
 
 export function Units() {
   return (
-    <section id="units" className="mx-auto max-w-6xl px-4 py-20 sm:px-5 sm:py-24">
-      <Reveal>
-        <SectionHead kicker="Склад корпусу" title="Підрозділи" />
-      </Reveal>
-      <div className="mt-12 grid gap-5 md:grid-cols-3">
+    <section id="units" className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-5 sm:pb-24">
+      <div className="grid gap-5 md:grid-cols-3">
         {UNITS.map((u, i) => (
           <Reveal key={u.id} delay={i * 0.1}>
             <article

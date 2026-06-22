@@ -142,7 +142,7 @@ export default function GalleryPage() {
                 <div className="relative">
                   <button
                     onClick={() => setIndex(i)}
-                    className="lift group block w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] p-1.5 hover:border-[var(--accent)]"
+                    className="lift group block w-full cursor-pointer overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] p-1.5 hover:border-[var(--accent)]"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
                       <img
@@ -234,14 +234,16 @@ export default function GalleryPage() {
                       if (e.target === e.currentTarget) setIndex(null);
                     }}
                   >
-                    <figure className="flex max-h-full flex-col items-center">
-                      <img
-                        src={img.src}
-                        alt={img.caption || img.key}
-                        className="max-h-[76vh] max-w-full rounded-xl object-contain"
-                      />
+                    <figure className="w-full max-w-[920px]">
+                      <div className="aspect-video w-full overflow-hidden rounded-xl border border-white/15 bg-black/40">
+                        <img
+                          src={img.src}
+                          alt={img.caption || img.key}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
                       {img.caption && (
-                        <figcaption className="mt-4 font-display text-base uppercase tracking-wide text-white sm:text-lg">
+                        <figcaption className="mt-4 text-center font-display text-base uppercase tracking-wide text-white sm:text-lg">
                           {img.caption}
                         </figcaption>
                       )}
