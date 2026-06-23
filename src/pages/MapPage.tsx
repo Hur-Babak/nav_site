@@ -350,17 +350,12 @@ export default function MapPage() {
                       onChange={(v) => updateMarker(selected.id, { videos: v })}
                       placeholder="https://youtu.be/..."
                     />
-                    <Field label="Підрозділи (через кому)">
-                      <input
-                        value={(selected.units ?? []).join(", ")}
-                        onChange={(e) =>
-                          updateMarker(selected.id, {
-                            units: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                          })
-                        }
-                        className="input"
-                      />
-                    </Field>
+                    <UrlList
+                      label="Підрозділи"
+                      items={selected.units ?? []}
+                      onChange={(v) => updateMarker(selected.id, { units: v })}
+                      placeholder="TFEW"
+                    />
                     <p className="font-mono text-[11px] text-[var(--muted-2)]">
                       x {selected.x} · y {selected.y}
                     </p>
@@ -454,9 +449,9 @@ export default function MapPage() {
                 {selected.description && (
                   <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{selected.description}</p>
                 )}
-                {(selected.units?.length || selected.source) && (
+                {((selected.units?.filter(Boolean).length ?? 0) > 0 || selected.source) && (
                   <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border-soft)] pt-4">
-                    {selected.units?.map((u) => (
+                    {selected.units?.filter(Boolean).map((u) => (
                       <span key={u} className="bg-[var(--panel-2)] px-2 py-1 font-mono text-xs">
                         {u}
                       </span>
