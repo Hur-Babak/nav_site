@@ -1,50 +1,84 @@
 [
   {
-    "id": "tfew",
-    "name": "TFEW",
-    "color": "#e24b4a",
-    "map": "altis",
+    "id": "co_vsl9vq4",
+    "name": "Gothic Cross",
+    "color": "#d8772a",
+    "map": "lythium",
     "markers": [
       {
-        "id": "m_tfew_1",
-        "color": "#e24b4a",
-        "title": "Ліквідовано рейдову групу",
-        "date": "30.08.2026",
-        "description": "Засідка на околиці. Знищено мобільну групу противника, що готувала провокацію.",
-        "x": 16200,
-        "y": 15400,
-        "units": ["TFEW"],
-        "source": "Freelancer Times"
+        "id": "m_m4pawsm",
+        "color": "#63a022",
+        "title": "Знищена техніка ЗС Іраку",
+        "date": "14.06.2025",
+        "description": "Силами 2 батальйону Обьєднаного Корпусу був наведений удар міномета з лазерним коректуванням",
+        "x": 17481,
+        "y": 2832,
+        "units": [
+          "Нав"
+        ],
+        "images": [
+          "https://media.discordapp.net/attachments/1392608675767521401/1515824588041359380/20260614211447_1.jpg?ex=6a3b9de8&is=6a3a4c68&hm=71f475c25467fda49c38e7b8298b0fcefca1bdd9a1a36aec5765df13c11e2b84&=&format=webp&width=1439&height=809"
+        ]
       },
       {
-        "id": "m_tfew_2",
-        "color": "#ef9f27",
-        "title": "Знищено колону постачання",
-        "date": "28.08.2026",
-        "description": "Перерізано логістичний маршрут НАПА, уражено три одиниці техніки.",
-        "x": 13800,
-        "y": 16800,
-        "units": ["TFEW", "CCO P.U.M.A."],
-        "source": "Freelancer Times"
-      }
-    ]
-  },
-  {
-    "id": "ion",
-    "name": "ION",
-    "color": "#2f8fd0",
-    "map": "altis",
-    "markers": [
+        "id": "m_40d71tw",
+        "color": "#2f8fd0",
+        "title": "Порятунок полонених",
+        "date": "14.06.2025",
+        "description": "2 Батальйон Корпусу \"Нав\" рятує полонених захоплений під час штурму міста Orfar",
+        "x": 19996,
+        "y": 3618,
+        "units": [
+          "Нав"
+        ],
+        "images": [
+          "https://media.discordapp.net/attachments/1392608675767521401/1516000330234466334/20182E1.JPG?ex=6a3b98d4&is=6a3a4754&hm=ecb5fda4424fafa66691353b229ab23b02b34f63102201060363721a11dbaeac&=&format=webp&width=1439&height=809"
+        ]
+      },
       {
-        "id": "m_ion_1",
-        "color": "#63a022",
-        "title": "Захоплено склад БК",
-        "date": "26.08.2026",
-        "description": "Раптовим штурмом захоплено перевалочний склад противника.",
-        "x": 17400,
-        "y": 13600,
-        "units": ["ION"],
-        "source": "Freelancer Times"
+        "id": "m_7byocj8",
+        "color": "#9a64d0",
+        "title": "Брифінг перед міссією",
+        "date": "13.06.2026",
+        "description": "Зона брифінгу під час підготовки 1 батальйону Об'єднаного Корпусу \"Нав\" до штурму міста Orfar",
+        "x": 12164,
+        "y": 1897,
+        "units": [
+          "Нав"
+        ],
+        "images": [
+          "https://media.discordapp.net/attachments/1392608675767521401/1515399008837832854/201B391.JPG?ex=6a3b630e&is=6a3a118e&hm=e543a9606577259af20796a65cc42a133243b03fe576f234eab35ad9a30b1cb1&=&format=webp&width=1440&height=810",
+          "https://media.discordapp.net/attachments/1392608675767521401/1515399162139639848/201A751.JPG?ex=6a3b6333&is=6a3a11b3&hm=7b8476e5110992bd483b17511fce913ef213e09ee0297022946ce1c5cf345710&=&format=webp&width=1440&height=810"
+        ]
+      },
+      {
+        "id": "m_exazt49",
+        "color": "#e24b4a",
+        "title": "Втрати позицій і особового складу",
+        "date": "21.08.2026",
+        "description": "Під час захисту населеного пункту біля MikisFob, союзні сили США втратили особовий склад",
+        "x": 8993,
+        "y": 10875,
+        "units": [
+          "10 Гірська Дивізія США"
+        ],
+        "images": [
+          "https://media.discordapp.net/attachments/1392657984001146890/1519029819352809503/image.png?ex=6a3c1243&is=6a3ac0c3&hm=4fe0812b6fd6a8f3902fb0ff8ceb8de201559827d3223732fded24465cd670cd&=&format=webp&quality=lossless&width=1586&height=810",
+          "https://media.discordapp.net/attachments/1392608406371700736/1518536517973446717/20260621213708_1.jpg?ex=6a3b9856&is=6a3a46d6&hm=0567fe25a753bac31a20d99a24bfce0b26addfaa5fadfa22404d54e2b62836bf&=&format=webp&width=1439&height=809"
+        ]
+      },
+      {
+        "id": "m_8mfwpjb",
+        "color": "#9a64d0",
+        "title": "Початок Операції",
+        "date": "13.08.2026",
+        "description": "Відправка 1 Батальйону Об'єднаного Корпусу \"Нав\" на операцією міста Orfar",
+        "x": 12374,
+        "y": 1812,
+        "units": [],
+        "images": [
+          "https://media.discordapp.net/attachments/1392608675767521401/1518047746727088339/20260613195302_1.jpg?ex=6a3b22a2&is=6a39d122&hm=14b3bb48df050961adbf77c35b246cd8d459ad6e390c3e2d8b2a6a97fae8fd92&=&format=webp&width=1439&height=809"
+        ]
       }
     ]
   }
