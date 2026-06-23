@@ -23,11 +23,13 @@ const BUNDLED = Object.entries(modules)
   .sort((a, b) => a.key.localeCompare(b.key));
 
 const UKEY = "nav.gallery.user.v1";
+
 interface UserImg {
   id: string;
   src: string;
   caption: string;
 }
+
 function loadUser(): UserImg[] {
   try {
     const r = localStorage.getItem(UKEY);
@@ -35,6 +37,7 @@ function loadUser(): UserImg[] {
   } catch {
     /* ignore */
   }
+
   return [];
 }
 
@@ -49,7 +52,9 @@ export default function GalleryPage() {
   const { authed } = useAuth();
   const [userImgs, setUserImgs] = useState<UserImg[]>(() => loadUser());
   const [index, setIndex] = useState<number | null>(null);
+
   const open = index !== null;
+
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
@@ -63,31 +68,46 @@ export default function GalleryPage() {
 
   useEffect(() => {
     if (!open) return;
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIndex(null);
     };
+
     window.addEventListener("keydown", onKey);
+
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   const items: Item[] = [
-    ...BUNDLED.map((b) => ({ key: b.key, src: b.src, caption: b.caption })),
-    ...userImgs.map((u) => ({ key: u.id, src: u.src, caption: u.caption, userId: u.id })),
+    ...BUNDLED.map((b) => ({
+      key: b.key,
+      src: b.src,
+      caption: b.caption,
+    })),
+    ...userImgs.map((u) => ({
+      key: u.id,
+      src: u.src,
+      caption: u.caption,
+      userId: u.id,
+    })),
   ];
 
   const onUpload = (files: FileList | null) => {
     if (!files) return;
+
     Promise.all(
       Array.from(files).map(
         (f) =>
           new Promise<UserImg>((res, rej) => {
             const r = new FileReader();
+
             r.onload = () =>
               res({
                 id: "u_" + Math.random().toString(36).slice(2, 9),
                 src: String(r.result),
                 caption: f.name.replace(/\.[^.]+$/, ""),
               });
+
             r.onerror = () => rej(new Error("read"));
             r.readAsDataURL(f);
           })
@@ -97,7 +117,9 @@ export default function GalleryPage() {
       .catch(() => alert("Помилка читання файлів"));
   };
 
-  const removeUser = (id: string) => setUserImgs((prev) => prev.filter((u) => u.id !== id));
+  const removeUser = (id: string) => {
+    setUserImgs((prev) => prev.filter((u) => u.id !== id));
+  };
 
   return (
     <>
@@ -124,6 +146,7 @@ export default function GalleryPage() {
                 }}
               />
             </label>
+
             <span className="font-mono text-[11px] text-[var(--muted-2)]">
               зберігається у твоєму браузері; для постійної публікації клади файли в
               src/assets/gallery/
@@ -151,6 +174,7 @@ export default function GalleryPage() {
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
+
                       {img.caption && (
                         <span className="absolute bottom-2 left-2 rounded-md bg-[rgba(10,13,10,0.8)] px-2.5 py-1 text-xs text-[var(--text)] backdrop-blur sm:text-sm">
                           {img.caption}
@@ -158,6 +182,7 @@ export default function GalleryPage() {
                       )}
                     </div>
                   </button>
+
                   {authed && img.userId && (
                     <button
                       onClick={() => removeUser(img.userId as string)}
@@ -175,86 +200,108 @@ export default function GalleryPage() {
       </div>
 
       {open && index !== null && (
-        <div
-          className="fixed inset-0 z-[2000] bg-black/85 backdrop-blur-sm"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIndex(null);
-          }}
+  <div
+    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
+    onClick={(e) => {
+      if (e.target === e.currentTarget) setIndex(null);
+    }}
+  >
+    <button
+      onClick={() => setIndex(null)}
+      aria-label="Закрити"
+      className="absolute right-6 top-6 z-30 flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white transition-colors hover:bg-black/80"
+    >
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+
+    <div className="relative h-[92vh] w-[92vw]">
+      <button
+        ref={prevRef}
+        aria-label="Назад"
+        className="absolute left-4 top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white transition-colors hover:bg-black/80"
+      >
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
         >
-          <button
-            onClick={() => setIndex(null)}
-            aria-label="Закрити"
-            className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/40 text-white transition-colors hover:bg-black/70"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
+          <path d="M15 6l-6 6 6 6" />
+        </svg>
+      </button>
 
-          <div className="relative mx-auto flex h-full w-full max-w-[1000px] items-center">
-            <button
-              ref={prevRef}
-              aria-label="Назад"
-              className="absolute left-1 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/40 text-white transition-colors hover:bg-black/70"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M15 6l-6 6 6 6" />
-              </svg>
-            </button>
-            <button
-              ref={nextRef}
-              aria-label="Далі"
-              className="absolute right-1 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/40 text-white transition-colors hover:bg-black/70"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 6l6 6-6 6" />
-              </svg>
-            </button>
+      <button
+        ref={nextRef}
+        aria-label="Далі"
+        className="absolute right-4 top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white transition-colors hover:bg-black/80"
+      >
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
 
-            <Swiper
-              modules={[Navigation, Pagination, Keyboard]}
-              navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
-              onBeforeInit={(s: SwiperClass) => {
-                const nav = s.params.navigation;
-                if (nav && typeof nav !== "boolean") {
-                  nav.prevEl = prevRef.current;
-                  nav.nextEl = nextRef.current;
-                }
-              }}
-              pagination={{ clickable: true }}
-              keyboard
-              initialSlide={index}
-              className="h-full w-full"
-            >
-              {items.map((img) => (
-                <SwiperSlide key={img.key}>
-                  <div
-                    className="flex h-full items-center justify-center px-14 py-10"
-                    onClick={(e) => {
-                      if (e.target === e.currentTarget) setIndex(null);
-                    }}
-                  >
-                    <figure className="w-full max-w-[920px]">
-                      <div className="aspect-video w-full overflow-hidden rounded-xl border border-white/15 bg-black/40">
-                        <img
-                          src={img.src}
-                          alt={img.caption || img.key}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      {img.caption && (
-                        <figcaption className="mt-4 text-center font-display text-base uppercase tracking-wide text-white sm:text-lg">
-                          {img.caption}
-                        </figcaption>
-                      )}
-                    </figure>
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        </div>
-      )}
+      <Swiper
+        modules={[Navigation, Pagination, Keyboard]}
+        navigation={{
+          prevEl: prevRef.current,
+          nextEl: nextRef.current,
+        }}
+        onBeforeInit={(s: SwiperClass) => {
+          const nav = s.params.navigation;
+
+          if (nav && typeof nav !== "boolean") {
+            nav.prevEl = prevRef.current;
+            nav.nextEl = nextRef.current;
+          }
+        }}
+        pagination={{ clickable: true }}
+        keyboard
+        initialSlide={index}
+        className="h-full w-full"
+      >
+        {items.map((img) => (
+          <SwiperSlide key={img.key}>
+            <div className="flex h-full w-full items-center justify-center px-20 py-12">
+              <figure className="flex h-full w-full flex-col items-center justify-center">
+                <div className="h-full w-full overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                  <img
+                    src={img.src}
+                    alt={img.caption || img.key}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                {img.caption && (
+                  <figcaption className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-md bg-black/60 px-4 py-2 text-center font-display text-base uppercase tracking-wide text-white sm:text-lg">
+                    {img.caption}
+                  </figcaption>
+                )}
+              </figure>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  </div>
+)}
     </>
   );
 }
