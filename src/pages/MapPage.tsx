@@ -338,33 +338,18 @@ export default function MapPage() {
                         className="input"
                       />
                     </Field>
-                    <Field label="Фото — URL, по одному на рядок">
-                      <textarea
-                        value={markerImages(selected).join("\n")}
-                        onChange={(e) =>
-                          updateMarker(selected.id, {
-                            images: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
-                            image: undefined,
-                          })
-                        }
-                        rows={3}
-                        className="input"
-                        placeholder="/media/crops/squad.jpg"
-                      />
-                    </Field>
-                    <Field label="Відео — URL, по одному на рядок (mp4 або YouTube)">
-                      <textarea
-                        value={(selected.videos ?? []).join("\n")}
-                        onChange={(e) =>
-                          updateMarker(selected.id, {
-                            videos: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
-                          })
-                        }
-                        rows={2}
-                        className="input"
-                        placeholder="https://youtu.be/...  або  /media/1007.mp4"
-                      />
-                    </Field>
+                    <UrlList
+                      label="Фото (URL) — додавай по одному"
+                      items={selected.images ?? (selected.image ? [selected.image] : [])}
+                      onChange={(v) => updateMarker(selected.id, { images: v, image: undefined })}
+                      placeholder="/media/crops/squad.jpg"
+                    />
+                    <UrlList
+                      label="Відео (URL: mp4 або YouTube)"
+                      items={selected.videos ?? []}
+                      onChange={(v) => updateMarker(selected.id, { videos: v })}
+                      placeholder="https://youtu.be/..."
+                    />
                     <Field label="Підрозділи (через кому)">
                       <input
                         value={(selected.units ?? []).join(", ")}
@@ -442,7 +427,7 @@ export default function MapPage() {
             onClick={() => setSelected(null)}
           >
             <div
-              className="w-full max-w-md overflow-hidden rounded-xl border-2 bg-[var(--panel)] shadow-[0_16px_50px_rgba(0,0,0,0.55)]"
+              className="max-h-[90vh] w-full max-w-2xl overflow-x-hidden overflow-y-auto rounded-xl border-2 bg-[var(--panel)] shadow-[0_16px_50px_rgba(0,0,0,0.55)]"
               style={{ borderColor: selected.color }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -501,16 +486,63 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+function UrlList({
+  label,
+  items,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  items: string[];
+  onChange: (v: string[]) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <span className="mb-1 block font-mono text-[11px] text-[var(--muted-2)]">{label}</span>
+      <div className="space-y-2">
+        {items.map((url, i) => (
+          <div key={i} className="flex gap-2">
+            <input
+              value={url}
+              onChange={(e) => {
+                const next = [...items];
+                next[i] = e.target.value;
+                onChange(next);
+              }}
+              placeholder={placeholder}
+              className="input flex-1"
+            />
+            <button
+              onClick={() => onChange(items.filter((_, j) => j !== i))}
+              aria-label="Видалити"
+              className="shrink-0 border border-[var(--border)] px-3 text-[var(--muted-2)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger)]"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        <button
+          onClick={() => onChange([...items, ""])}
+          className="label-mono border border-[var(--border)] px-3 py-2 transition-colors hover:border-[var(--accent)]"
+        >
+          + додати
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function MarkerMedia({ images, videos }: { images: string[]; videos: string[] }) {
   if (!images.length && !videos.length) return null;
   return (
     <div className="bg-black/30">
-      {images.length === 1 && <img src={images[0]} alt="" className="h-48 w-full object-cover" />}
+      {images.length === 1 && <img src={images[0]} alt="" className="h-56 w-full object-cover sm:h-80" />}
       {images.length > 1 && (
         <Swiper modules={[Navigation, Pagination]} navigation pagination={{ clickable: true }} className="marker-media">
           {images.map((src, i) => (
             <SwiperSlide key={i}>
-              <img src={src} alt="" className="h-48 w-full object-cover" />
+              <img src={src} alt="" className="h-56 w-full object-cover sm:h-80" />
             </SwiperSlide>
           ))}
         </Swiper>

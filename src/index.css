@@ -173,7 +173,12 @@ body {
   transform: translateY(-4px);
 }
 
-/* Swiper (лайтбокс галереї) */
+/* Swiper (лайтбокс галереї / медіа міток) */
+.swiper {
+  --swiper-navigation-color: #ffffff;
+  --swiper-navigation-size: 24px;
+  --swiper-pagination-color: var(--accent);
+}
 .swiper-button-next,
 .swiper-button-prev {
   color: #fff;

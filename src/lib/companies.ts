@@ -27,12 +27,12 @@ export interface MapMarker {
 }
 
 export function markerImages(m: MapMarker): string[] {
-  if (m.images && m.images.length) return m.images;
-  return m.image ? [m.image] : [];
+  const arr = m.images ?? (m.image ? [m.image] : []);
+  return arr.map((s) => s.trim()).filter(Boolean);
 }
 
 export function markerVideos(m: MapMarker): string[] {
-  return m.videos ?? [];
+  return (m.videos ?? []).map((s) => s.trim()).filter(Boolean);
 }
 
 export interface Company {
