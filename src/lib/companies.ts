@@ -19,9 +19,20 @@ export interface MapMarker {
   description: string;
   x: number; // easting, ігрові метри
   y: number; // northing, ігрові метри
-  image?: string;
+  images?: string[];
+  videos?: string[];
   units?: string[];
   source?: string;
+  image?: string; // legacy (одне фото) — для зворотної сумісності
+}
+
+export function markerImages(m: MapMarker): string[] {
+  if (m.images && m.images.length) return m.images;
+  return m.image ? [m.image] : [];
+}
+
+export function markerVideos(m: MapMarker): string[] {
+  return m.videos ?? [];
 }
 
 export interface Company {

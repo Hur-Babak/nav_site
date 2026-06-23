@@ -1,4 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import ArmaMap from "../components/map/ArmaMap";
 import { PageBanner } from "../components/PageBanner";
 import { useAuth } from "../components/AuthContext";
@@ -9,6 +14,8 @@ import {
   resetCompanies,
   exportCompanies,
   uid,
+  markerImages,
+  markerVideos,
   MARKER_COLORS,
   type Company,
   type MapMarker,
@@ -331,11 +338,31 @@ export default function MapPage() {
                         className="input"
                       />
                     </Field>
-                    <Field label="Фото (URL)">
-                      <input
-                        value={selected.image ?? ""}
-                        onChange={(e) => updateMarker(selected.id, { image: e.target.value || undefined })}
+                    <Field label="Фото — URL, по одному на рядок">
+                      <textarea
+                        value={markerImages(selected).join("\n")}
+                        onChange={(e) =>
+                          updateMarker(selected.id, {
+                            images: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
+                            image: undefined,
+                          })
+                        }
+                        rows={3}
                         className="input"
+                        placeholder="/media/crops/squad.jpg"
+                      />
+                    </Field>
+                    <Field label="Відео — URL, по одному на рядок (mp4 або YouTube)">
+                      <textarea
+                        value={(selected.videos ?? []).join("\n")}
+                        onChange={(e) =>
+                          updateMarker(selected.id, {
+                            videos: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
+                          })
+                        }
+                        rows={2}
+                        className="input"
+                        placeholder="https://youtu.be/...  або  /media/1007.mp4"
                       />
                     </Field>
                     <Field label="Підрозділи (через кому)">
@@ -415,10 +442,11 @@ export default function MapPage() {
             onClick={() => setSelected(null)}
           >
             <div
-              className="w-full max-w-md overflow-hidden border border-[var(--border)] bg-[var(--panel)]"
+              className="w-full max-w-md overflow-hidden rounded-xl border-2 bg-[var(--panel)] shadow-[0_16px_50px_rgba(0,0,0,0.55)]"
+              style={{ borderColor: selected.color }}
               onClick={(e) => e.stopPropagation()}
             >
-              {selected.image && <img src={selected.image} alt="" className="h-44 w-full object-cover" />}
+              <MarkerMedia images={markerImages(selected)} videos={markerVideos(selected)} />
               <div className="p-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -471,4 +499,43 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
       {children}
     </label>
   );
+}
+
+function MarkerMedia({ images, videos }: { images: string[]; videos: string[] }) {
+  if (!images.length && !videos.length) return null;
+  return (
+    <div className="bg-black/30">
+      {images.length === 1 && <img src={images[0]} alt="" className="h-48 w-full object-cover" />}
+      {images.length > 1 && (
+        <Swiper modules={[Navigation, Pagination]} navigation pagination={{ clickable: true }} className="marker-media">
+          {images.map((src, i) => (
+            <SwiperSlide key={i}>
+              <img src={src} alt="" className="h-48 w-full object-cover" />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
+      {videos.map((v, i) => (
+        <VideoEmbed key={i} url={v} />
+      ))}
+    </div>
+  );
+}
+
+function VideoEmbed({ url }: { url: string }) {
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+  if (yt) {
+    return (
+      <div className="aspect-video w-full">
+        <iframe
+          className="h-full w-full border-0"
+          src={`https://www.youtube.com/embed/${yt[1]}`}
+          title="video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+  return <video src={url} controls className="w-full" />;
 }

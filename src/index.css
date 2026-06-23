@@ -200,3 +200,12 @@ body {
 .swiper-pagination-bullet-active {
   background: var(--accent);
 }
+.marker-media .swiper-button-next,
+.marker-media .swiper-button-prev {
+  width: 30px;
+  height: 30px;
+}
+.marker-media .swiper-button-next::after,
+.marker-media .swiper-button-prev::after {
+  font-size: 12px;
+}
