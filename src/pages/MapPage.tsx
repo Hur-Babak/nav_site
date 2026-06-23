@@ -422,32 +422,10 @@ export default function MapPage() {
         )}
 
         {selected && !editing && (
-  <div
-    className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/75 p-4"
-    onClick={() => setSelected(null)}
-  >
-    <div
-      className="w-full max-w-[820px] max-h-[90vh] overflow-hidden rounded-xl border-2 bg-[var(--panel)] shadow-[0_16px_50px_rgba(0,0,0,0.55)]"
-      style={{ borderColor: selected.color }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <MarkerMedia images={markerImages(selected)} videos={markerVideos(selected)} />
-
-      <div className="p-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="h-3.5 w-3.5 rounded-full" style={{ background: selected.color }} />
-            {selected.date && (
-              <span className="font-mono text-sm text-[var(--muted-2)]">{selected.date}</span>
-            )}
-          </div>
-
-          <button
+          <div
+            className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/70 p-4"
             onClick={() => setSelected(null)}
-            className="label-mono text-lg hover:text-[var(--text)]"
-            aria-label="Закрити"
           >
-<<<<<<< HEAD
             <div
               className="max-h-[90vh] w-full max-w-2xl overflow-x-hidden overflow-y-auto rounded-xl border-2 bg-[var(--panel)] shadow-[0_16px_50px_rgba(0,0,0,0.55)]"
               style={{ borderColor: selected.color }}
@@ -492,41 +470,8 @@ export default function MapPage() {
                 )}
               </div>
             </div>
-=======
-            ✕
-          </button>
-        </div>
-
-        <h3 className="font-display mt-4 text-3xl font-semibold uppercase tracking-wide">
-          {selected.title}
-        </h3>
-
-        {selected.description && (
-          <p className="mt-5 text-base leading-relaxed text-[var(--muted)]">
-            {selected.description}
-          </p>
-        )}
-
-        {(selected.units?.length || selected.source) && (
-          <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--border-soft)] pt-5">
-            {selected.units?.map((u) => (
-              <span key={u} className="bg-[var(--panel-2)] px-3 py-1.5 font-mono text-sm">
-                {u}
-              </span>
-            ))}
-
-            {selected.source && (
-              <span className="ml-auto font-mono text-xs text-[var(--muted-2)]">
-                {selected.source}
-              </span>
-            )}
->>>>>>> 0d2f51c (200)
           </div>
         )}
-      </div>
-    </div>
-  </div>
-)}
       </div>
     </>
   );
@@ -592,20 +537,12 @@ function MarkerMedia({ images, videos }: { images: string[]; videos: string[] })
   if (!images.length && !videos.length) return null;
   return (
     <div className="bg-black/30">
-<<<<<<< HEAD
       {images.length === 1 && <img src={images[0]} alt="" className="h-56 w-full object-cover sm:h-80" />}
-=======
-      {images.length === 1 && <img src={images[0]} alt="" className="h-80 w-full object-cover" />}
->>>>>>> 0d2f51c (200)
       {images.length > 1 && (
         <Swiper modules={[Navigation, Pagination]} navigation pagination={{ clickable: true }} className="marker-media">
           {images.map((src, i) => (
             <SwiperSlide key={i}>
-<<<<<<< HEAD
               <img src={src} alt="" className="h-56 w-full object-cover sm:h-80" />
-=======
-              <img src={src} alt="" className="h-80 w-full object-cover" />
->>>>>>> 0d2f51c (200)
             </SwiperSlide>
           ))}
         </Swiper>
