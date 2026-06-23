@@ -4,6 +4,26 @@ import * as L from "leaflet";
 // Конфіг кожної карти: Arma3Map.Maps[slug] = { CRS, tilePattern, tileSize, ... }
 export const ARMA_BASE = "https://jetelain.github.io/Arma3Map";
 
+// Слой Aerial (супутник) із нового atlas.plan-ops.fr.
+// ID беруться зі сторінки карти (atlas.plan-ops.fr/maps/arma3/<slug>):
+// мініатюри шарів мають вигляд /data/1/maps/<mapId>/<layerId>/0/0/0.<ext>.
+export const ATLAS_DATA = "https://atlas.plan-ops.fr/data/1/maps";
+
+export interface AtlasAerial {
+  mapId: number;
+  aerialLayer: number;
+  ext: string;
+}
+
+export const ATLAS_AERIAL: Record<string, AtlasAerial> = {
+  altis: { mapId: 3, aerialLayer: 295, ext: "webp" },
+  stratis: { mapId: 104, aerialLayer: 291, ext: "webp" },
+  malden: { mapId: 68, aerialLayer: 292, ext: "webp" },
+  tanoa: { mapId: 109, aerialLayer: 294, ext: "webp" },
+  enoch: { mapId: 37, aerialLayer: 293, ext: "webp" },
+  lythium: { mapId: 67, aerialLayer: 296, ext: "webp" },
+};
+
 export interface ArmaMapConfig {
   title: string;
   tilePattern: string;

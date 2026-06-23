@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { loadArmaMap, ARMA_BASE } from "../../lib/arma";
+import { loadArmaMap, ARMA_BASE, ATLAS_DATA, ATLAS_AERIAL } from "../../lib/arma";
 import type { Company, MapMarker } from "../../lib/companies";
 
 interface Props {
@@ -90,9 +90,21 @@ export default function ArmaMap({
           }
           overlays["Координатна сітка"] = gridLayer;
         }
-        L.control
-          .layers({ "Атлас (топографічна)": baseLayer }, overlays, { position: "topright" })
-          .addTo(mp);
+        const baseLayers: Record<string, L.Layer> = { "Атлас (топографічна)": baseLayer };
+        const aerialCfg = ATLAS_AERIAL[company.map];
+        if (aerialCfg) {
+          baseLayers["Aerial (супутник)"] = L.tileLayer(
+            `${ATLAS_DATA}/${aerialCfg.mapId}/${aerialCfg.aerialLayer}/{z}/{x}/{y}.${aerialCfg.ext}`,
+            {
+              tileSize: cfg.tileSize,
+              minZoom: cfg.minZoom,
+              maxZoom: cfg.maxZoom,
+              noWrap: true,
+              attribution: cfg.attribution,
+            }
+          );
+        }
+        L.control.layers(baseLayers, overlays, { position: "topright" }).addTo(mp);
 
         // Розмір міток залежно від зуму.
         const applyPinScale = () => {

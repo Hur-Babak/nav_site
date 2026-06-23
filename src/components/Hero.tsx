@@ -6,7 +6,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="grain relative flex min-h-[100svh] items-center overflow-hidden border-b border-[var(--border)]"
+      className="grain relative flex h-[100svh] items-center overflow-hidden border-b border-[var(--border)]"
     >
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -36,16 +36,14 @@ export function Hero() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 py-24 sm:px-5"
+        className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 sm:px-5"
       >
         <div className="flex items-center gap-4">
           <CorpsEmblem size={56} />
           <p className="label-mono">Join Corps «Nav»</p>
         </div>
         <h1 className="font-display max-w-3xl text-[2.1rem] font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl md:text-7xl">
-          Один стрій —
-          <br />
-          <span className="text-[var(--accent)]">одна сила</span>
+          Об'єднаний Корпус <span className="text-[var(--accent)]">«НАВ»</span>
         </h1>
         <p className="max-w-xl text-base leading-relaxed text-[var(--muted)] sm:text-lg">
           Корпус в Arma 3 створений на підставах тактики, дисципліни та поваги.

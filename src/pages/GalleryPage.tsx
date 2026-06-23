@@ -102,7 +102,7 @@ export default function GalleryPage() {
   return (
     <>
       <PageBanner
-        image="/media/crops/squad.jpg"
+        image="/media/banner-gallery.jpg"
         kicker="Медіа"
         title="Галерея"
         desc="Скріншоти з операцій Корпусу. Гортай свайпом або стрілками, клік — велике фото."
