@@ -14,7 +14,7 @@ export function SiteNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-[1000] border-b border-[var(--border)] bg-[rgba(10,13,10,0.85)] backdrop-blur">
+    <header className="sticky top-0 z-[1200] border-b border-[var(--border)] bg-[rgba(10,13,10,0.92)] backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-5">
         <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
           <CorpsEmblem size={34} />
